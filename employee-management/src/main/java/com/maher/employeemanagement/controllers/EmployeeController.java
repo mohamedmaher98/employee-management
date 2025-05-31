@@ -1,7 +1,11 @@
 package com.maher.employeemanagement.controllers;
 
+import com.maher.employeemanagement.IService.EmpService;
 import com.maher.employeemanagement.entities.Employee;
+import com.maher.employeemanagement.shared.*;
 import jakarta.validation.Valid;
+import org.hibernate.annotations.NotFound;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,77 +16,47 @@ import java.util.*;
 @RequestMapping("/api/v1/employees")
 public class EmployeeController
 {
+	private final EmpService empService;
 
-	List<Employee> employees = new ArrayList<>();
-
+	@Autowired
+	public EmployeeController(EmpService empService)
 	{
-		employees.add(
-				new Employee(UUID.randomUUID(), "Ali Mahmoud", "ali.mahmoud@example.com", "+201112223334", "IT", "Software Engineer", LocalDate.now(),
-						15000.00, true, "minia", "298071324000381"));
-
-		employees.add(
-				new Employee(UUID.randomUUID(), "Ali Mahmoud", "ali.mahmoud@example.com", "+201112223334", "IT", "Software Engineer", LocalDate.now(),
-						15000.00, true, "minia", "298071324000381"));
-
-		employees.add(
-				new Employee(UUID.randomUUID(), "Ali Mahmoud", "ali.mahmoud@example.com", "+201112223334", "IT", "Software Engineer", LocalDate.now(),
-						15000.00, true, "minia", "298071324000381"));
-	}
-
-	@GetMapping()
-	private ResponseEntity<List<Employee>> getEmployees()
-	{
-		return ResponseEntity.ok(employees);
+		this.empService = empService;
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<Employee> getEmployeeById(@PathVariable UUID id)
+	public ResponseEntity<GlobalErrorResponse<Employee>> findOneEmp(@PathVariable UUID id)
 	{
-		Optional<Employee> employee = employees.stream().filter(e -> e.getUuid().equals(id)).findFirst();
-
-		return employee.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+		Employee oneEmployee = empService.findOneEmployee(id);
+		return ResponseEntity.status(HttpStatus.OK).body(new GlobalErrorResponse<>(oneEmployee));
 	}
 
-	@PostMapping()
-	public ResponseEntity<Employee> addEmployee(@RequestBody @Valid Employee employee)
+	@GetMapping
+	public ResponseEntity<GlobalErrorResponse<List<Employee>>> findAllEmployees()
 	{
-		employees.add(employee);
-		return ResponseEntity.status(HttpStatus.CREATED).body(employee);
+		List<Employee> allEmployee = empService.findAllEmployee();
+		return ResponseEntity.status(HttpStatus.OK).body(new GlobalErrorResponse<>(allEmployee));
 	}
 
 	@DeleteMapping("/{id}")
-	public ResponseEntity<String> deleteEmployeeById(@PathVariable UUID id)
+	public ResponseEntity<GlobalErrorResponse<?>> deleteEmp(@PathVariable("id") UUID uuid)
 	{
-		Optional<Employee> employee = employees.stream().filter(e -> e.getUuid().equals(id)).findFirst();
+		empService.deleteEmployee(uuid);
+		return ResponseEntity.ok().build();
+	}
 
-		if (employee.isPresent())
-			return ResponseEntity.ok("employee had deleted successfully");
-		else
-			return ResponseEntity.notFound().build();
+	@PostMapping
+	public ResponseEntity<GlobalErrorResponse<?>> addEmployee(@RequestBody @Valid Employee employee)
+	{
+		empService.addEmployee(employee);
+		return ResponseEntity.ok().build();
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<Employee> editEmployee(@PathVariable UUID id, @RequestBody @Valid Employee employee)
+	public ResponseEntity<GlobalErrorResponse<Employee>> editEmployee(@RequestBody @Valid Employee employee,@PathVariable("id") UUID uuid)
 	{
-		Optional<Employee> eEmployee = employees.stream().filter(e -> e.getUuid().equals(id)).findFirst();
-
-		if (eEmployee.isPresent())
-		{
-			Employee existingEmployee = eEmployee.get();
-			existingEmployee.setName(employee.getName());
-			existingEmployee.setEmail(employee.getEmail());
-			existingEmployee.setPhone(employee.getPhone());
-			existingEmployee.setJobTitle(employee.getJobTitle());
-			existingEmployee.setDepartment(employee.getDepartment());
-			existingEmployee.setHireDate(employee.getHireDate());
-			existingEmployee.setSalary(employee.getSalary());
-			existingEmployee.setActive(employee.isActive());
-			existingEmployee.setAddress(employee.getAddress());
-			existingEmployee.setNationalId(employee.getNationalId());
-			return ResponseEntity.ok(existingEmployee);
-		}
-		else
-			return ResponseEntity.notFound().build();
+		Employee employee1 = empService.editEmployee(employee, uuid);
+		return ResponseEntity.status(HttpStatus.OK).body(new GlobalErrorResponse<>(employee1));
 	}
 
 }
