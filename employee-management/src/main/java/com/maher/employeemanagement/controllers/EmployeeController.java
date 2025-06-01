@@ -1,15 +1,14 @@
 package com.maher.employeemanagement.controllers;
 
 import com.maher.employeemanagement.IService.EmpService;
+import com.maher.employeemanagement.dtos.EmployeeUpdateDTO;
 import com.maher.employeemanagement.entities.Employee;
-import com.maher.employeemanagement.shared.*;
+import com.maher.employeemanagement.shared.GlobalErrorResponse;
 import jakarta.validation.Valid;
-import org.hibernate.annotations.NotFound;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.util.*;
 
 @RestController
@@ -53,7 +52,7 @@ public class EmployeeController
 	}
 
 	@PutMapping("/{id}")
-	public ResponseEntity<GlobalErrorResponse<Employee>> editEmployee(@RequestBody @Valid Employee employee,@PathVariable("id") UUID uuid)
+	public ResponseEntity<GlobalErrorResponse<Employee>> editEmployee(@RequestBody @Valid EmployeeUpdateDTO employee,@PathVariable("id") UUID uuid)
 	{
 		Employee employee1 = empService.editEmployee(employee, uuid);
 		return ResponseEntity.status(HttpStatus.OK).body(new GlobalErrorResponse<>(employee1));
