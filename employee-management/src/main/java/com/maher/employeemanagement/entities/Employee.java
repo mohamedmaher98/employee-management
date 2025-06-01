@@ -1,7 +1,9 @@
 package com.maher.employeemanagement.entities;
 
+import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
+import org.hibernate.annotations.UuidGenerator;
 
 import java.time.LocalDate;
 import java.util.UUID;
@@ -9,41 +11,35 @@ import java.util.UUID;
 @Getter
 @Setter
 @AllArgsConstructor
+@NoArgsConstructor
+@Entity
 public class Employee
 {
+	@Id
+	@GeneratedValue(strategy = GenerationType.UUID)
+	@UuidGenerator
 	private UUID uuid;
-	@NotBlank(message = "الاسم مطلوب")
-	@Size(min = 2, max = 50, message = "الاسم يجب أن يكون بين 2 و50 حرفًا")
+
+	@Column(name = "first_name", length = 15, nullable = false)
 	private String name;
-
-	@NotBlank(message = "البريد الإلكتروني مطلوب")
-	@Email(message = "صيغة البريد الإلكتروني غير صحيحة")
+	@Column(name = "email", length = 70, nullable = false)
 	private String email;
-
-	@NotBlank(message = "رقم الهاتف مطلوب")
-	@Pattern(regexp = "^[0-9\\-\\+]{9,15}$", message = "صيغة رقم الهاتف غير صحيحة")
+	@Column(name = "phone", length = 11, nullable = false)
 	private String phone;
-
-	@NotBlank(message = "المسمى الوظيفي مطلوب")
+	@Column(name = "job_title", length = 50, nullable = false)
 	private String jobTitle;
-
-	@NotBlank(message = "القسم مطلوب")
+	@Column(name = "department", length = 50, nullable = false)
 	private String department;
-
-	@NotNull(message = "تاريخ التعيين مطلوب")
-	@PastOrPresent(message = "تاريخ التعيين يجب أن يكون في الماضي أو اليوم")
+	@Column(name = "hire_date", nullable = false)
 	private LocalDate hireDate;
-
-	@PositiveOrZero(message = "الراتب يجب أن يكون رقمًا موجبًا أو صفر")
-	private double salary;
-
-	private boolean active;
-
-	@NotBlank(message = "العنوان مطلوب")
+	@Column(name = "salary", nullable = false)
+	private Double salary;
+	@Column(name = "active")
+	private Boolean active;
+	@Column(name = "address", length = 120)
 	private String address;
-
-	@NotBlank(message = "الرقم القومي مطلوب")
-	@Size(min = 14, max = 14, message = "الرقم القومي يجب أن يحتوي على 14 رقمًا")
-	@Pattern(regexp = "\\d{14}", message = "الرقم القومي يجب أن يحتوي على أرقام فقط")
+	@Column(name = "national_id", length = 14, nullable = false)
 	private String nationalId;
+	@Column(name = "department_id", nullable = false)
+	private UUID departmentId = UUID.randomUUID();
 }

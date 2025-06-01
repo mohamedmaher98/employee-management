@@ -3,8 +3,9 @@ package com.maher.employeemanagement.dtos;
 import jakarta.validation.constraints.*;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
-public record EmployeeCreateDTo(
+public record EmployeeCreateDTO(
 		@NotBlank(message = "الاسم مطلوب")
 		@Size(min = 2, max = 50, message = "الاسم يجب أن يكون بين 2 و50 حرفًا")
 		String name,
@@ -38,6 +39,10 @@ public record EmployeeCreateDTo(
 		@NotBlank(message = "الرقم القومي مطلوب")
 		@Size(min = 14, max = 14, message = "الرقم القومي يجب أن يحتوي على 14 رقمًا")
 		@Pattern(regexp = "\\d{14}", message = "الرقم القومي يجب أن يحتوي على أرقام فقط")
-		String nationalId)
+		String nationalId,
+
+
+		UUID departmentId
+		)
 {
 }

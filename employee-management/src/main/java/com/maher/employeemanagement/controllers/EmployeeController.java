@@ -1,7 +1,7 @@
 package com.maher.employeemanagement.controllers;
 
 import com.maher.employeemanagement.IService.EmpService;
-import com.maher.employeemanagement.dtos.EmployeeUpdateDTO;
+import com.maher.employeemanagement.dtos.*;
 import com.maher.employeemanagement.entities.Employee;
 import com.maher.employeemanagement.shared.GlobalErrorResponse;
 import jakarta.validation.Valid;
@@ -45,7 +45,7 @@ public class EmployeeController
 	}
 
 	@PostMapping
-	public ResponseEntity<GlobalErrorResponse<?>> addEmployee(@RequestBody @Valid Employee employee)
+	public ResponseEntity<GlobalErrorResponse<?>> addEmployee(@RequestBody @Valid EmployeeCreateDTO employee)
 	{
 		empService.addEmployee(employee);
 		return ResponseEntity.ok().build();
