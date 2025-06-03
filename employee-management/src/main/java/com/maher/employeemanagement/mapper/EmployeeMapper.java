@@ -20,7 +20,7 @@ public class EmployeeMapper
 		emp.setActive(empDto.active());
 		emp.setAddress(empDto.address());
 		emp.setNationalId(empDto.nationalId());
-		emp.setDepartmentId(UUID.randomUUID());
+
 		return emp;
 	}
 

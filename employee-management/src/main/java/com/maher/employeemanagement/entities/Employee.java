@@ -6,7 +6,7 @@ import lombok.*;
 import org.hibernate.annotations.UuidGenerator;
 
 import java.time.LocalDate;
-import java.util.UUID;
+import java.util.*;
 
 @Getter
 @Setter
@@ -18,6 +18,7 @@ public class Employee
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)
 	@UuidGenerator
+	@Column(name = "employee_id")
 	private UUID uuid;
 
 	@Column(name = "first_name", length = 15, nullable = false)
@@ -40,6 +41,12 @@ public class Employee
 	private String address;
 	@Column(name = "national_id", length = 14, nullable = false)
 	private String nationalId;
-	@Column(name = "department_id", nullable = false)
-	private UUID departmentId = UUID.randomUUID();
+
+
+	@ManyToMany(cascade = CascadeType.ALL)
+	@JoinTable(name = "employee_department",
+			joinColumns = @JoinColumn(name = "employee_id"),
+			inverseJoinColumns = @JoinColumn(name = "department_id")
+	)
+	Set<Department> departments = new HashSet<>();
 }
